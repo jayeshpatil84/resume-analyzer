@@ -1,0 +1,5 @@
+Place your trained OpenNLP NER model file here as: en-ner-skills.bin
+
+If this file is absent, the application falls back to dataset keyword matching (fully functional).
+
+To train the model, refer to the TRAINING-GUIDE.md file in this project.

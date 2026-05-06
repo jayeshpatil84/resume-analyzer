@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI Resume Analyzer</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue:    #2b6cb0;
+            --blue-dk: #2c5282;
+            --green:   #276749;
+            --red:     #9b2c2c;
+            --orange:  #c05621;
+            --purple:  #553c9a;
+            --gray:    #4a5568;
+            --gray-lt: #718096;
+            --bg:      #f0f4f8;
+        }
+
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #1a202c; min-height: 100vh; }
+
+        /* ── Header ───────────────────────────────── */
+        header {
+            background: var(--blue); color: white;
+            padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        header h1 { font-size: 1.3rem; font-weight: 700; }
+        header a { color: #bee3f8; text-decoration: none; font-size: 0.88rem; }
+
+        /* ── Layout ───────────────────────────────── */
+        .container { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+
+        .card {
+            background: white; border-radius: 12px;
+            padding: 1.8rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 1.4rem;
+        }
+        .card-title { font-size: 1rem; font-weight: 700; color: #2d3748; margin-bottom: 1.2rem; }
+
+        /* ── Form ─────────────────────────────────── */
+        .form-group { margin-bottom: 1.1rem; }
+        label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--gray); margin-bottom: 0.35rem; }
+
+        input[type="text"], textarea {
+            width: 100%; padding: 0.62rem 0.9rem;
+            border: 1.5px solid #e2e8f0; border-radius: 8px;
+            font-size: 0.93rem; font-family: inherit; transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--blue); }
+        textarea { resize: vertical; min-height: 120px; }
+
+        .file-drop {
+            border: 2px dashed #bee3f8; border-radius: 10px;
+            padding: 1.5rem; text-align: center; cursor: pointer;
+            background: #ebf8ff; transition: background 0.2s;
+        }
+        .file-drop:hover { background: #bee3f8; }
+        .file-drop input { display: none; }
+        .file-drop p  { color: var(--blue); font-size: 0.93rem; }
+        .file-drop .file-name { color: var(--green); font-weight: 600; margin-top: 0.4rem; font-size: 0.88rem; }
+
+        .btn {
+            background: var(--blue); color: white; border: none;
+            padding: 0.72rem 1.8rem; border-radius: 8px;
+            font-size: 0.97rem; font-weight: 700; cursor: pointer;
+            width: 100%; transition: background 0.2s;
+        }
+        .btn:hover { background: var(--blue-dk); }
+        .btn:disabled { background: #a0aec0; cursor: not-allowed; }
+
+        /* ── Loading ──────────────────────────────── */
+        .loading { display: none; text-align: center; padding: 2rem; }
+        .spinner {
+            width: 42px; height: 42px; border: 4px solid #e2e8f0;
+            border-top-color: var(--blue); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Score Box ────────────────────────────── */
+        #results { display: none; }
+
+        .score-box {
+            text-align: center; padding: 2rem;
+            border-radius: 12px; margin-bottom: 1.4rem; color: white;
+        }
+        .score-number { font-size: 4rem; font-weight: 800; line-height: 1; }
+        .score-label  { font-size: 1.1rem; margin-top: 0.3rem; opacity: 0.92; }
+        .score-sub    { font-size: 0.83rem; margin-top: 0.4rem; opacity: 0.75; }
+        .score-excellent { background: linear-gradient(135deg,#276749,#38a169); }
+        .score-good      { background: linear-gradient(135deg,#2b6cb0,#3182ce); }
+        .score-fair      { background: linear-gradient(135deg,#c05621,#ed8936); }
+        .score-poor      { background: linear-gradient(135deg,#9b2c2c,#e53e3e); }
+
+        /* ── Progress bars ────────────────────────── */
+        .progress-wrap { background: #e2e8f0; border-radius: 99px; height: 9px; margin: 0.5rem 0 0.25rem; }
+        .progress-fill { height: 9px; border-radius: 99px; transition: width 1s ease; }
+
+        /* ── Stats row (3 mini cards) ─────────────── */
+        .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1.4rem; }
+        .stat-card {
+            background: white; border-radius: 10px;
+            padding: 1rem; text-align: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+        }
+        .stat-number { font-size: 2rem; font-weight: 800; }
+        .stat-label  { font-size: 0.78rem; color: var(--gray-lt); margin-top: 0.2rem; }
+
+        /* ── Skills grid ──────────────────────────── */
+        .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 600px) { .skills-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: 1fr; } }
+
+        .section-label { font-size: 0.83rem; font-weight: 700; margin-bottom: 0.6rem; }
+
+        .skill-tag {
+            display: inline-block; padding: 0.28rem 0.65rem;
+            border-radius: 99px; font-size: 0.78rem; margin: 0.18rem; font-weight: 500;
+        }
+        .tag-matched { background: #c6f6d5; color: #276749; }
+        .tag-missing  { background: #fed7d7; color: #9b2c2c; }
+        .tag-extra    { background: #e9d8fd; color: #553c9a; }
+
+        /* ── ATS section ──────────────────────────── */
+        .ats-score-row {
+            display: flex; align-items: center; gap: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .ats-badge {
+            flex-shrink: 0; width: 68px; height: 68px; border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: 800; color: white;
+        }
+        .ats-badge .ats-num { font-size: 1.5rem; line-height: 1; }
+        .ats-badge .ats-pct { font-size: 0.7rem; opacity: 0.85; }
+        .ats-good   { background: linear-gradient(135deg,#276749,#38a169); }
+        .ats-ok     { background: linear-gradient(135deg,#2b6cb0,#3182ce); }
+        .ats-warn   { background: linear-gradient(135deg,#c05621,#ed8936); }
+        .ats-bad    { background: linear-gradient(135deg,#9b2c2c,#e53e3e); }
+
+        .checklist { list-style: none; }
+        .checklist li {
+            padding: 0.38rem 0; border-bottom: 1px solid #f0f0f0;
+            font-size: 0.88rem; display: flex; align-items: flex-start; gap: 0.5rem;
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .check-icon { flex-shrink: 0; font-size: 0.95rem; }
+
+        /* ── Spell Check ──────────────────────────── */
+        .spell-summary {
+            padding: 0.7rem 1rem; border-radius: 8px;
+            margin-bottom: 1rem; font-size: 0.9rem; font-weight: 500;
+        }
+        .spell-clean { background: #c6f6d5; color: #276749; }
+        .spell-warn  { background: #fefcbf; color: #744210; }
+        .spell-error { background: #fed7d7; color: #9b2c2c; }
+
+        .spell-error-card {
+            border: 1px solid #fed7d7; border-radius: 8px;
+            padding: 0.8rem 1rem; margin-bottom: 0.7rem;
+            background: #fff5f5;
+        }
+        .spell-word { font-weight: 700; color: #9b2c2c; font-size: 0.95rem; }
+        .spell-context {
+            font-size: 0.82rem; color: var(--gray); margin-top: 0.3rem;
+            font-family: monospace; background: #f7f7f7; padding: 0.3rem 0.5rem;
+            border-radius: 4px; white-space: pre-wrap; word-break: break-word;
+        }
+        .spell-suggestions { margin-top: 0.4rem; font-size: 0.82rem; color: var(--gray); }
+        .spell-sug-tag {
+            display: inline-block; background: #e9d8fd; color: #553c9a;
+            border-radius: 4px; padding: 0.15rem 0.45rem; margin: 0.1rem;
+            font-size: 0.78rem; font-weight: 500;
+        }
+
+        /* ── Recommendations ──────────────────────── */
+        .rec-list { list-style: none; }
+        .rec-list li {
+            padding: 0.55rem 0; border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem; color: var(--gray);
+            padding-left: 1.4rem; position: relative;
+        }
+        .rec-list li::before { content: "→"; position: absolute; left: 0; color: var(--blue); }
+        .rec-list li:last-child { border-bottom: none; }
+
+        /* ── Meta ─────────────────────────────────── */
+        .meta { font-size: 0.78rem; color: var(--gray-lt); text-align: right; margin-top: 0.6rem; }
+
+        /* ── Error box ────────────────────────────── */
+        .error-box {
+            background: #fff5f5; border: 1px solid #feb2b2;
+            border-radius: 8px; padding: 0.9rem 1.1rem;
+            color: #9b2c2c; display: none; margin-bottom: 1rem; font-size: 0.9rem;
+        }
+
+        /* ── Section tabs for ATS / Spell ─────────── */
+        .tab-bar { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .tab-btn {
+            padding: 0.4rem 0.9rem; border-radius: 6px; font-size: 0.82rem;
+            font-weight: 600; cursor: pointer; border: 1.5px solid #e2e8f0;
+            background: white; color: var(--gray); transition: all 0.15s;
+        }
+        .tab-btn.active { background: var(--blue); color: white; border-color: var(--blue); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* ── Collapsible spell errors ─────────────── */
+        .show-more-btn {
+            background: none; border: 1.5px solid #e2e8f0; border-radius: 6px;
+            padding: 0.4rem 0.9rem; font-size: 0.82rem; cursor: pointer; color: var(--gray);
+            margin-top: 0.5rem; width: 100%;
+        }
+        .show-more-btn:hover { background: #f7fafc; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🤖 AI Resume Analyzer</h1>
+    <a href="/history">View History →</a>
+</header>
+
+<div class="container">
+
+    <!-- Upload Form -->
+    <div class="card">
+        <div class="card-title">Upload Resume &amp; Job Description</div>
+
+        <div class="form-group">
+            <label>Job Title</label>
+            <input type="text" id="jobTitle" placeholder="e.g. Senior Backend Java Developer"/>
+        </div>
+
+        <div class="form-group">
+            <label>Resume (PDF only)</label>
+            <div class="file-drop" onclick="document.getElementById('resumeFile').click()">
+                <input type="file" id="resumeFile" accept=".pdf" onchange="updateFileName(this)"/>
+                <p>📄 Click to upload your resume PDF</p>
+                <div class="file-name" id="fileNameLabel">No file selected</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Job Description</label>
+            <textarea id="jobDescription" placeholder="Paste the full job description here..."></textarea>
+        </div>
+
+        <div class="error-box" id="errorBox"></div>
+        <button class="btn" id="analyzeBtn" onclick="analyze()">🔍 Analyze Resume</button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p style="color:var(--gray)">Running AI analysis — skill extraction, ATS check &amp; spell check...</p>
+    </div>
+
+    <!-- Results -->
+    <div id="results">
+
+        <!-- Match Score -->
+        <div id="scoreBox" class="score-box">
+            <div class="score-number" id="scoreNumber">0%</div>
+            <div class="score-label" id="scoreLabel">-</div>
+            <div class="score-sub" id="scoreSub"></div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number" id="statMatched" style="color:var(--green)">0</div>
+                <div class="stat-label">Skills Matched</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statAts" style="color:var(--blue)">0</div>
+                <div class="stat-label">ATS Score / 100</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statSpell" style="color:var(--orange)">0</div>
+                <div class="stat-label">Spell Errors</div>
+            </div>
+        </div>
+
+        <!-- Skills Breakdown -->
+        <div class="card">
+            <div class="card-title">Skills Breakdown</div>
+            <div class="progress-wrap">
+                <div class="progress-fill" id="progressBar" style="width:0%;background:var(--blue)"></div>
+            </div>
+            <div style="font-size:0.75rem;color:var(--gray-lt);margin-bottom:1rem" id="progressLabel"></div>
+
+            <div class="skills-grid">
+                <div>
+                    <div class="section-label" style="color:var(--green)">✅ Matched Skills</div>
+                    <div id="matchedTags"></div>
+                </div>
+                <div>
+                    <div class="section-label" style="color:var(--red)">❌ Missing Skills</div>
+                    <div id="missingTags"></div>
+                </div>
+            </div>
+            <div style="margin-top:1rem">
+                <div class="section-label" style="color:var(--purple)">⭐ Bonus Skills (not in JD)</div>
+                <div id="extraTags"></div>
+            </div>
+        </div>
+
+        <!-- ATS + Spell Check Tabs -->
+        <div class="card">
+            <div class="tab-bar">
+                <button class="tab-btn active" onclick="switchTab('ats', this)">🤖 ATS Compatibility</button>
+                <button class="tab-btn" onclick="switchTab('spell', this)">📝 Spell Check</button>
+            </div>
+
+            <!-- ATS Tab -->
+            <div class="tab-panel active" id="tab-ats">
+                <div class="ats-score-row">
+                    <div class="ats-badge" id="atsBadge">
+                        <div class="ats-num" id="atsNum">0</div>
+                        <div class="ats-pct">/100</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:700;font-size:1rem" id="atsLabel"></div>
+                        <div style="font-size:0.82rem;color:var(--gray-lt);margin-top:0.2rem">
+                            How well your resume will parse through automated hiring systems
+                        </div>
+                        <div class="progress-wrap" style="margin-top:0.5rem">
+                            <div class="progress-fill" id="atsBar" style="width:0%;background:var(--green)"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                    <div>
+                        <div class="section-label" style="color:var(--green)">Passed Checks</div>
+                        <ul class="checklist" id="atsPassedList"></ul>
+                    </div>
+                    <div>
+                        <div class="section-label" style="color:var(--red)">Failed Checks</div>
+                        <ul class="checklist" id="atsFailedList"></ul>
+                    </div>
+                </div>
+
+                <div id="atsSuggestionsWrap" style="margin-top:1rem;display:none">
+                    <div class="section-label" style="color:var(--orange)">ATS Improvement Tips</div>
+                    <ul class="rec-list" id="atsSuggestions"></ul>
+                </div>
+            </div>
+
+            <!-- Spell Check Tab -->
+            <div class="tab-panel" id="tab-spell">
+                <div class="spell-summary" id="spellSummary"></div>
+                <div id="spellErrorsContainer"></div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="card">
+            <div class="card-title">💡 Recommendations to Improve Your Resume</div>
+            <ul class="rec-list" id="recommendationsList"></ul>
+            <div class="meta" id="metaInfo"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // ── File upload label ──────────────────────────────────────────────────
+    function updateFileName(input) {
+        document.getElementById('fileNameLabel').textContent =
+            input.files[0] ? input.files[0].name : 'No file selected';
+    }
+
+    // ── Error display ──────────────────────────────────────────────────────
+    function showError(msg) {
+        const b = document.getElementById('errorBox');
+        b.textContent = msg; b.style.display = 'block';
+    }
+    function hideError() { document.getElementById('errorBox').style.display = 'none'; }
+
+    // ── Tab switching ──────────────────────────────────────────────────────
+    function switchTab(name, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + name).classList.add('active');
+    }
+
+    // ── Main analyze call ──────────────────────────────────────────────────
+    async function analyze() {
+        hideError();
+        const resume = document.getElementById('resumeFile').files[0];
+        const jd     = document.getElementById('jobDescription').value.trim();
+        const title  = document.getElementById('jobTitle').value.trim();
+
+        if (!resume) { showError('Please upload a PDF resume.'); return; }
+        if (!jd)     { showError('Please paste the job description.'); return; }
+
+        const formData = new FormData();
+        formData.append('resume', resume);
+        formData.append('jobDescription', jd);
+        formData.append('jobTitle', title || 'Not Specified');
+
+        document.getElementById('analyzeBtn').disabled = true;
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('results').style.display = 'none';
+
+        try {
+            const res  = await fetch('/api/analyze', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.status === 'ERROR') {
+                showError(data.errorMessage || 'Analysis failed.');
+                return;
+            }
+            renderResults(data);
+        } catch (err) {
+            showError('Could not connect to server. Is Spring Boot running on port 8080?');
+        } finally {
+            document.getElementById('analyzeBtn').disabled = false;
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    // ── Render all results ─────────────────────────────────────────────────
+    function renderResults(data) {
+        // Score box
+        const scoreBox = document.getElementById('scoreBox');
+        const sc = data.matchScore;
+        scoreBox.className = 'score-box ' + (sc >= 80 ? 'score-excellent' : sc >= 60 ? 'score-good' : sc >= 40 ? 'score-fair' : 'score-poor');
+        document.getElementById('scoreNumber').textContent = sc + '%';
+        document.getElementById('scoreLabel').textContent  = data.scoreLabel;
+        document.getElementById('scoreSub').textContent    =
+            (data.matchedSkills?.length || 0) + ' of ' + data.totalRequiredSkills + ' required skills matched';
+
+        // Stats row
+        document.getElementById('statMatched').textContent = data.matchedSkills?.length || 0;
+        document.getElementById('statAts').textContent     = data.atsResult?.atsScore   || 0;
+        document.getElementById('statSpell').textContent   = data.spellErrorCount       || 0;
+
+        // Skills progress bar
+        document.getElementById('progressBar').style.width = sc + '%';
+        document.getElementById('progressLabel').textContent =
+            `${data.totalResumeSkills} skills in your resume · ${data.totalRequiredSkills} skills required by JD`;
+
+        // Skill tags
+        renderTags('matchedTags', data.matchedSkills, 'tag-matched');
+        renderTags('missingTags', data.missingSkills, 'tag-missing');
+        renderTags('extraTags',   data.extraSkills,   'tag-extra');
+
+        // ATS
+        renderAts(data.atsResult);
+
+        // Spell Check
+        renderSpell(data.spellErrors, data.spellCheckSummary, data.spellErrorCount);
+
+        // Recommendations
+        const ul = document.getElementById('recommendationsList');
+        ul.innerHTML = '';
+        (data.recommendations || []).forEach(r => {
+            const li = document.createElement('li');
+            li.textContent = r;
+            ul.appendChild(li);
+        });
+
+        // Meta
+        document.getElementById('metaInfo').textContent =
+            'Processed in ' + data.processingTimeMs + 'ms · ' + data.resumeFileName;
+
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ── ATS render ─────────────────────────────────────────────────────────
+    function renderAts(ats) {
+        if (!ats) return;
+        const s = ats.atsScore;
+
+        const badge = document.getElementById('atsBadge');
+        badge.className = 'ats-badge ' + (s >= 80 ? 'ats-good' : s >= 60 ? 'ats-ok' : s >= 40 ? 'ats-warn' : 'ats-bad');
+        document.getElementById('atsNum').textContent   = s;
+        document.getElementById('atsLabel').textContent = ats.atsLabel;
+        document.getElementById('atsBar').style.width   = s + '%';
+
+        const passedList = document.getElementById('atsPassedList');
+        passedList.innerHTML = '';
+        (ats.passedChecks || []).forEach(c => {
+            const li = document.createElement('li');
+            li.innerHTML = '<span class="check-icon">✅</span>' + c;
+            passedList.appendChild(li);
+        });
+
+        const failedList = document.getElementById('atsFailedList');
+        failedList.innerHTML = '';
+        (ats.failedChecks || []).forEach(c => {
+            const li = document.createElement('li');
+            li.innerHTML = '<span class="check-icon">❌</span>' + c;
+            failedList.appendChild(li);
+        });
+
+        const sugsWrap = document.getElementById('atsSuggestionsWrap');
+        const sugsList = document.getElementById('atsSuggestions');
+        sugsList.innerHTML = '';
+        if (ats.atsSuggestions && ats.atsSuggestions.length > 0) {
+            ats.atsSuggestions.forEach(s => {
+                const li = document.createElement('li');
+                li.textContent = s;
+                sugsList.appendChild(li);
+            });
+            sugsWrap.style.display = 'block';
+        } else {
+            sugsWrap.style.display = 'none';
+        }
+    }
+
+    // ── Spell check render ─────────────────────────────────────────────────
+    function renderSpell(errors, summary, count) {
+        const summaryEl = document.getElementById('spellSummary');
+        summaryEl.textContent = summary || 'Spell check complete.';
+        summaryEl.className = 'spell-summary ' + (count === 0 ? 'spell-clean' : count <= 5 ? 'spell-warn' : 'spell-error');
+
+        const container = document.getElementById('spellErrorsContainer');
+        container.innerHTML = '';
+
+        if (!errors || errors.length === 0) return;
+
+        const SHOW_INITIALLY = 5;
+        errors.forEach((err, idx) => {
+            const card = document.createElement('div');
+            card.className = 'spell-error-card';
+            if (idx >= SHOW_INITIALLY) card.classList.add('spell-hidden');
+            if (idx >= SHOW_INITIALLY) card.style.display = 'none';
+
+            const sugs = (err.suggestions || []).map(s =>
+                `<span class="spell-sug-tag">→ ${s}</span>`).join('');
+
+            card.innerHTML = `
+                <div class="spell-word">⚠️ "${err.word}"</div>
+                <div class="spell-context">${err.context || ''}</div>
+                ${err.ruleDescription ? `<div class="spell-suggestions" style="margin-top:0.35rem;font-style:italic;color:#718096">${err.ruleDescription}</div>` : ''}
+                ${sugs ? `<div class="spell-suggestions">Suggestions: ${sugs}</div>` : '<div class="spell-suggestions" style="color:#a0aec0">No suggestions available</div>'}
+            `;
+            container.appendChild(card);
+        });
+
+        if (errors.length > SHOW_INITIALLY) {
+            const btn = document.createElement('button');
+            btn.className = 'show-more-btn';
+            btn.textContent = `Show ${errors.length - SHOW_INITIALLY} more errors`;
+            btn.onclick = function () {
+                container.querySelectorAll('.spell-hidden').forEach(el => el.style.display = 'block');
+                btn.style.display = 'none';
+            };
+            container.appendChild(btn);
+        }
+    }
+
+    // ── Skill tag helper ───────────────────────────────────────────────────
+    function renderTags(containerId, skills, cssClass) {
+        const div = document.getElementById(containerId);
+        div.innerHTML = '';
+        if (!skills || skills.length === 0) {
+            div.innerHTML = '<span style="color:#a0aec0;font-size:0.82rem">None found</span>';
+            return;
+        }
+        skills.forEach(s => {
+            const span = document.createElement('span');
+            span.className = 'skill-tag ' + cssClass;
+            span.textContent = s;
+            div.appendChild(span);
+        });
+    }
+</script>
+
+</body>
+</html>

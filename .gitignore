@@ -1,0 +1,38 @@
+# ── Java / Maven ─────────────────────────────────────────────
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+.mvn/wrapper/maven-wrapper.jar
+
+# ── IDE ───────────────────────────────────────────────────────
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+*.swp
+*.swo
+.vscode/
+*.DS_Store
+
+# ── Spring Boot ───────────────────────────────────────────────
+*.log
+logs/
+
+# ── Sensitive config ──────────────────────────────────────────
+# If you create a local override, don't commit it
+src/main/resources/application-local.properties
+src/main/resources/application-prod.properties
+
+# ── Trained NLP model (binary — large file, do not commit) ───
+src/main/resources/opennlp-models/*.bin
+
+# ── OS ────────────────────────────────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Analysis History — AI Resume Analyzer</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #1a202c; min-height: 100vh; }
+
+        header {
+            background: #2b6cb0; color: white;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        header h1 { font-size: 1.3rem; font-weight: 700; }
+        header a { color: #bee3f8; text-decoration: none; font-size: 0.88rem; }
+
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+
+        .card { background: white; border-radius: 12px; padding: 1.8rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .card-title { font-size: 1rem; font-weight: 700; color: #2d3748; margin-bottom: 1.2rem; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        th { background: #f7fafc; color: #4a5568; font-weight: 700; text-align: left; padding: 0.65rem 0.9rem; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 0.65rem 0.9rem; border-bottom: 1px solid #f0f0f0; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f7fafc; }
+
+        .badge {
+            display: inline-block; padding: 0.2rem 0.6rem;
+            border-radius: 99px; font-size: 0.75rem; font-weight: 700;
+        }
+        .badge-green  { background: #c6f6d5; color: #276749; }
+        .badge-blue   { background: #bee3f8; color: #2c5282; }
+        .badge-orange { background: #feebc8; color: #c05621; }
+        .badge-red    { background: #fed7d7; color: #9b2c2c; }
+
+        .empty { text-align: center; color: #a0aec0; padding: 3rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🤖 AI Resume Analyzer</h1>
+    <a href="/">← Back to Analyzer</a>
+</header>
+
+<div class="container">
+    <div class="card">
+        <div class="card-title">Analysis History</div>
+        <div id="historyContainer" class="empty">Loading...</div>
+    </div>
+</div>
+
+<script>
+    async function loadHistory() {
+        const container = document.getElementById('historyContainer');
+        try {
+            const res  = await fetch('/api/history');
+            const data = await res.json();
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p>No analyses yet. <a href="/">Analyze your first resume →</a></p>';
+                return;
+            }
+
+            let html = `<table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Resume File</th>
+                        <th>Job Title</th>
+                        <th>Match Score</th>
+                        <th>ATS Score</th>
+                        <th>Spell Errors</th>
+                        <th>Time (ms)</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            data.forEach(row => {
+                const date = row.createdAt
+                    ? new Date(row.createdAt).toLocaleString()
+                    : '—';
+
+                const matchScore = row.matchScore;
+                const matchBadge = matchScore >= 80 ? 'badge-green'
+                    : matchScore >= 60 ? 'badge-blue'
+                    : matchScore >= 40 ? 'badge-orange'
+                    : 'badge-red';
+
+                const atsScore = row.atsScore || 0;
+                const atsBadge = atsScore >= 80 ? 'badge-green'
+                    : atsScore >= 60 ? 'badge-blue'
+                    : atsScore >= 40 ? 'badge-orange'
+                    : 'badge-red';
+
+                const spellErrors = row.spellErrorCount || 0;
+                const spellBadge = spellErrors === 0 ? 'badge-green'
+                    : spellErrors <= 5 ? 'badge-orange'
+                    : 'badge-red';
+
+                html += `<tr>
+                    <td>${date}</td>
+                    <td>${row.resumeFileName || '—'}</td>
+                    <td>${row.jobTitle || '—'}</td>
+                    <td><span class="badge ${matchBadge}">${matchScore}%</span></td>
+                    <td><span class="badge ${atsBadge}">${atsScore}/100</span></td>
+                    <td><span class="badge ${spellBadge}">${spellErrors}</span></td>
+                    <td>${row.processingTimeMs}</td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            container.className = '';
+
+        } catch (err) {
+            container.innerHTML = '<p style="color:#9b2c2c">Failed to load history. Is the server running?</p>';
+        }
+    }
+
+    loadHistory();
+</script>
+
+</body>
+</html>

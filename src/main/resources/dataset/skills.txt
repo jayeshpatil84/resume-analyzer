@@ -1,0 +1,544 @@
+# =============================================================
+# SKILLS DATASET — AI Resume Analyzer
+# Generated from:
+#   1. technical_skills.csv   (528 curated tech skills)
+#   2. JobsDatasetProcessed.csv (3000 real job postings, 25 categories)
+#
+# Total skills: combined, deduplicated, categorized
+# Format: one skill per line | # lines are comments (ignored)
+#
+# HOW TO ADD MORE SKILLS:
+#   Simply add a new line under the right category and restart the app.
+#   The SkillDatasetLoader reads this file at startup automatically.
+# =============================================================
+
+# ──────────────────────────────────────────────────
+# Programming Languages
+# ──────────────────────────────────────────────────
+Assembly
+Bash
+C
+C#
+C++
+COBOL
+CSS
+Clojure
+Crystal
+Dart
+Elixir
+F#
+Fortran
+Go
+GraphQL
+Groovy
+HTML
+Haskell
+JSON
+Java
+JavaScript
+Julia
+Kotlin
+LESS
+Lua
+MATLAB
+Markdown
+Nim
+OCaml
+Objective-C
+PHP
+PL/SQL
+Perl
+PowerShell
+Protocol Buffers
+Python
+R
+Ruby
+Rust
+SQL
+SQL Server
+Sass
+Scala
+Shell
+Solidity
+Swift
+T-SQL
+TypeScript
+Vyper
+XML
+YAML
+Zig
+
+# ──────────────────────────────────────────────────
+# Backend Frameworks
+# ──────────────────────────────────────────────────
+.NET
+ASP.NET
+Django
+Express.js
+FastAPI
+Fastify
+Flask
+GraphQL API
+Hibernate
+JPA
+Laravel
+Micronaut
+NestJS
+Node.js
+Quarkus
+REST API
+Ruby on Rails
+Spring Boot
+Spring Data
+Spring Framework
+Spring MVC
+Spring Security
+Symfony
+Vert.x
+gRPC
+
+# ──────────────────────────────────────────────────
+# Frontend & Web
+# ──────────────────────────────────────────────────
+Angular
+Ant Design
+Axios
+Babel
+Backbone.js
+Bootstrap
+Bulma
+Chakra UI
+Chart.js
+D3.js
+Ember.js
+Foundation
+JSP
+Material-UI
+MobX
+Next.js
+NgRx
+Nuxt.js
+Parcel
+React
+Redux
+Rollup
+RxJS
+Semantic UI
+Socket.io
+Svelte
+Tailwind CSS
+Three.js
+Thymeleaf
+Vite
+Vue.js
+WebGL
+WebRTC
+WebSocket
+Webpack
+jQuery
+
+# ──────────────────────────────────────────────────
+# Databases
+# ──────────────────────────────────────────────────
+AWS DynamoDB
+AWS RDS
+ArangoDB
+BigQuery
+Cassandra
+ClickHouse
+CockroachDB
+Cosmos DB
+CouchDB
+Data Modeling
+Data Warehousing
+DynamoDB
+ETL
+Elasticsearch
+Firebase
+Firestore
+H2
+HBase
+Hive
+InfluxDB
+MariaDB
+MongoDB
+MySQL
+Neo4j
+Oracle
+PostgreSQL
+Redis
+Redshift
+SQLite
+Snowflake
+Solr
+Splunk
+TimescaleDB
+
+# ──────────────────────────────────────────────────
+# Cloud Platforms
+# ──────────────────────────────────────────────────
+AWS
+AWS CloudFormation
+AWS CloudWatch
+AWS EC2
+AWS ECS
+AWS EKS
+AWS Fargate
+AWS IAM
+AWS Lambda
+AWS Route53
+AWS S3
+AWS SNS
+AWS SQS
+AWS VPC
+Azure
+Azure Active Directory
+Azure Blob Storage
+Azure Cosmos DB
+Azure DevOps
+Azure Functions
+Azure Monitor
+Azure SQL
+Azure VM
+Cloudflare
+DigitalOcean
+GCP
+Google BigQuery
+Google Cloud
+Google Cloud Functions
+Google Cloud Run
+Google Cloud Storage
+Google Compute Engine
+Google Kubernetes Engine
+Heroku
+IBM Cloud
+Linode
+Netlify
+Oracle Cloud
+Salesforce Cloud
+Vercel
+
+# ──────────────────────────────────────────────────
+# DevOps & CI/CD
+# ──────────────────────────────────────────────────
+API Gateway
+Ansible
+Apache
+ArgoCD
+Bamboo
+Bitbucket
+Blue-Green Deployment
+CDN
+CI/CD
+Caddy
+Canary Release
+Chef
+CircleCI
+Consul
+Docker
+Feature Flags
+Flux
+Git
+Git Flow
+GitHub
+GitHub Actions
+GitHub Flow
+GitLab
+GitLab CI
+Helm
+Istio
+Jenkins
+Kubernetes
+Kustomize
+Linkerd
+Linux
+Load Balancer
+Nginx
+Nomad
+Packer
+Puppet
+SaltStack
+Service Mesh
+Spinnaker
+TeamCity
+Terraform
+Traefik
+Travis CI
+Trunk Based Development
+Unix
+Vagrant
+Vault
+
+# ──────────────────────────────────────────────────
+# Data & Analytics
+# ──────────────────────────────────────────────────
+Airflow
+Apache Airflow
+Apache Hadoop
+Apache Hive
+Apache Kafka
+Apache Spark
+Business Intelligence
+Dagster
+Data Analysis
+Data Engineering
+Data Mining
+Data Quality
+Data Science
+Data Visualization
+Data Warehouse
+Google Analytics
+Hadoop
+Jupyter
+Jupyter Notebook
+Kafka
+Looker
+MLflow
+Metaflow
+NumPy
+Pandas
+Power BI
+Prefect
+Qlik
+R Studio
+SAS
+Spark
+Statistical Analysis
+Statistics
+Tableau
+dbt
+
+# ──────────────────────────────────────────────────
+# Machine Learning & AI
+# ──────────────────────────────────────────────────
+A/B Testing
+Anomaly Detection
+Apache OpenNLP
+Artificial Intelligence
+Autoencoder
+BERT
+CNN
+CatBoost
+Chroma
+Classification
+Cluster Analysis
+Colab
+Computer Vision
+DALL-E
+Deep Learning
+Feature Engineering
+GAN
+GPT
+GRU
+Generative AI
+Hugging Face
+Image Segmentation
+Kaggle
+Keras
+LLM
+LSTM
+LangChain
+LightGBM
+LlamaIndex
+MLOps
+Machine Learning
+NLP
+NLTK
+Named Entity Recognition
+Natural Language Processing
+Neural Networks
+Object Detection
+OpenCV
+Pinecone
+Predictive Modeling
+PyTorch
+RNN
+Recommendation Systems
+Regression Analysis
+Reinforcement Learning
+Scikit-learn
+Sentiment Analysis
+Speech Recognition
+Stable Diffusion
+TensorFlow
+Text-to-Speech
+Time Series Analysis
+Topic Modeling
+Transfer Learning
+Transformers
+Weaviate
+XGBoost
+spaCy
+
+# ──────────────────────────────────────────────────
+# Mobile Development
+# ──────────────────────────────────────────────────
+Android
+Android SDK
+Apache Cordova
+App Store Connect
+AppCenter
+Bitrise
+Branch
+Codemagic
+Expo
+Fastlane
+Flutter
+Google Play Console
+Ionic
+Jetpack Compose
+Kotlin Multiplatform
+MAUI
+NativeScript
+OneSignal
+React Native
+SwiftUI
+TestFlight
+UIKit
+Xamarin
+iOS
+
+# ──────────────────────────────────────────────────
+# Testing & QA
+# ──────────────────────────────────────────────────
+Appium
+Automated Testing
+BDD
+Behavior Driven Development
+Cucumber
+Cypress
+Detox
+End-to-End Testing
+Integration Testing
+JMeter
+JUnit
+Jasmine
+Jest
+Karma
+Load Testing
+Manual Testing
+Mocha
+Mockito
+Performance Testing
+Playwright
+Postman
+Puppeteer
+Pytest
+REST Assured
+Robot Framework
+Security Testing
+Selenium
+SoapUI
+SpecFlow
+TDD
+Test Driven Development
+TestNG
+Unit Testing
+
+# ──────────────────────────────────────────────────
+# Security
+# ──────────────────────────────────────────────────
+Blockchain
+Cryptography
+Cybersecurity
+DDoS Protection
+Encryption
+Firewall
+IDS/IPS
+Information Security
+JWT
+Kerberos
+LDAP
+OAuth
+OAuth2
+OpenID Connect
+PKI
+Penetration Testing
+RADIUS
+SAML
+SIEM
+SOC
+SSH
+SSL
+SSL/TLS
+Smart Contracts
+TLS
+VPN
+Vulnerability Assessment
+WAF
+Zero Knowledge Proof
+Zero Trust
+
+# ──────────────────────────────────────────────────
+# Networking & Infrastructure
+# ──────────────────────────────────────────────────
+5G
+ActiveMQ
+Containerization
+DNS
+Edge Computing
+HTTP
+HTTPS
+Internet of Things
+IoT
+Logging
+Message Queue
+Microservices
+Monitoring
+NATS
+Observability
+RabbitMQ
+Redis Streams
+Robotics
+Serverless
+TCP/IP
+Vim
+Virtualization
+ZeroMQ
+Zsh
+
+# ──────────────────────────────────────────────────
+# Tools & Practices
+# ──────────────────────────────────────────────────
+12 Factor App
+Adobe XD
+Agile
+Android Studio
+Bun
+Clean Code
+Code Review
+Confluence
+Design Patterns
+DevOps
+Domain Driven Design
+Draw.io
+Eclipse
+Figma
+Gradle
+InVision
+Insomnia
+IntelliJ
+Jira
+Kanban
+Lucidchart
+Maven
+Microsoft Teams
+Miro
+NPM
+Notion
+OpenAPI
+PNPM
+Pair Programming
+PyCharm
+RStudio
+Refactoring
+SOLID Principles
+Scrum
+Sketch
+Slack
+Swagger
+VS Code
+WebStorm
+Xcode
+Yarn
+Zoom
