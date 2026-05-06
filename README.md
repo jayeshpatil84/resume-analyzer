@@ -1,4 +1,4 @@
-# 📄 AI Resume Analyzer v2
+# 📄 AI Resume Analyzer 
 
 An AI-powered resume analysis tool built with **Spring Boot + Java 17**. Upload a PDF resume, paste a job description, and instantly get a full breakdown — JD skill match score, ATS compatibility report, skill gap analysis, recommendations, and spell check.
 
