@@ -1,4 +1,4 @@
-# =============================================================
+
 # SKILLS DATASET — AI Resume Analyzer
 # Generated from:
 #   1. technical_skills.csv   (528 curated tech skills)
@@ -10,7 +10,6 @@
 # HOW TO ADD MORE SKILLS:
 #   Simply add a new line under the right category and restart the app.
 #   The SkillDatasetLoader reads this file at startup automatically.
-# =============================================================
 
 # ──────────────────────────────────────────────────
 # Programming Languages
