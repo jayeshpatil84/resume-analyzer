@@ -1,5 +1,5 @@
 We expect fluency in <START:skill> Webpack <END> , <START:skill> Traefik <END> , and <START:skill> Cosmos DB <END> .
-Proficient in <START:skill> DDoS Protection <END> with hands-on project experience.
+Proficient in <START:skill> DDoS Protection <END> with hands-on project experience .
 Daily work involves <START:skill> OAuth2 <END> along with <START:skill> SSL <END> .
 The job description highlights <START:skill> BigQuery <END> as a core skill.
 Proficient in <START:skill> Redshift <END> , <START:skill> C++ <END> , and <START:skill> Image Segmentation <END> .
