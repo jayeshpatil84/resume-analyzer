@@ -8,10 +8,6 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-/**
- * JPA Entity — maps to the `analysis_results` table in MySQL.
- * Spring Data JPA auto-creates/updates this table on startup.
- */
 @Entity
 @Table(name = "analysis_results")
 @Data
@@ -29,10 +25,8 @@ public class AnalysisResult {
 
     private String jobTitle;
 
-    // JD Match score (0-100, Jaccard similarity)
     private int matchScore;
-
-    // ATS compatibility score (0-100)
+    
     private int atsScore;
 
     @Column(columnDefinition = "TEXT")
@@ -44,7 +38,6 @@ public class AnalysisResult {
     @Column(columnDefinition = "TEXT")
     private String extraSkills;
 
-    // Number of spell errors found
     private int spellErrorCount;
 
     private String resumeFileName;
