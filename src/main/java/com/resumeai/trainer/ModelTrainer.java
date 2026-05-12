@@ -6,20 +6,6 @@ import opennlp.tools.util.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-/**
- * MODEL TRAINER — OpenNLP NER Skill Extraction Model
- * ---------------------------------------------------
- * Trains a custom NER model from annotated sentences in OpenNLP format.
- *
- * Usage:
- *   mvn compile exec:java \
- *     -Dexec.mainClass="com.resumeai.trainer.ModelTrainer" \
- *     -Dexec.args="src/main/resources/opennlp-models/training-data.txt \
- *                  src/main/resources/opennlp-models/en-ner-skills.bin"
- *
- * Training data format (one annotated sentence per line):
- *   Developed <START:skill> Spring Boot <END> services on <START:skill> AWS <END>.
- */
 public class ModelTrainer {
 
     public static void main(String[] args) throws Exception {
