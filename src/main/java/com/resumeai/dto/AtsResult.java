@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 /**
@@ -16,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AtsResult {
-    private int atsScore;                // 0-100
+    private int atsScore;                
     private String atsLabel;             // "ATS Friendly", "Needs Work", etc.
     private List<String> passedChecks;   // Things the resume does well for ATS
     private List<String> failedChecks;   // Issues that may cause ATS rejection
