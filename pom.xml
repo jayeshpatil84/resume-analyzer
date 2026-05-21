@@ -12,7 +12,7 @@
 
     <groupId>com.resumeai</groupId>
     <artifactId>resume-analyzer</artifactId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
     <name>AI Resume Analyzer</name>
     <description>AI-powered resume analyzer with ATS scoring, spell checking, and JD matching</description>
