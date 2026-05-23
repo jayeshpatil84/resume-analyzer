@@ -16,6 +16,6 @@ public class WebController {
 
     @GetMapping("/history")
     public String history() {
-        return 
+        return "history";
     }
 }
