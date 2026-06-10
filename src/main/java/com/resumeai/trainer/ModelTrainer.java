@@ -3,6 +3,7 @@ package com.resumeai.trainer;
 import opennlp.tools.namefind.*;
 import opennlp.tools.util.*;
 
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
